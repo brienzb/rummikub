@@ -13,5 +13,5 @@ pip install -r requirements.txt
 
 ### 2. Run in Local
 ```bash
-python main.py
+uvicorn app.main:app --reload
 ```
