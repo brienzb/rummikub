@@ -38,6 +38,11 @@ async def get(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
 
 
+@app.get("/websocket")
+async def websocket(request: Request):
+    return templates.TemplateResponse(request=request, name="websocket.html")
+
+
 @app.websocket("/ws/{client_id}")
 async def websocket_endpoint(websocket: WebSocket, client_id: int):
     await manager.connect(websocket)
