@@ -12,23 +12,12 @@
     <link href="{{ url_for('static', path='/css/styles.css') }}" rel="stylesheet">
 </head>
 <body>
+
     <div class="container">
-        <!-- 제목 -->
-        <div class="d-flex justify-content-center m-5">
+        <div class="d-flex justify-content-center m-3">
             <div class="text-center">
-                <h1>Rummikub Hangeul Word</h1>
-                <h3>루미큐브 한글 워드</h3>
+                <h3>방 ID: {{ room_id }}</h3>
             </div>
-        </div>
-
-        <!-- 방 만들기 -->
-        <div class="d-flex justify-content-center mt-2 mb-2">
-            <button id="createRoom" type="button" class="btn btn-success w-50">방 만들기</button>
-        </div>
-
-        <!-- 방 접속하기 -->
-        <div class="d-flex justify-content-center mt-2 mb-2">
-            <button id="enterRoom" type="button" class="btn btn-primary w-50">방 접속하기</button>
         </div>
     </div>
 
@@ -38,6 +27,6 @@
     <!-- jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <!-- Static -->
-    <script src="{{ url_for('static', path='/js/index.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/game.js') }}"></script>
 </body>
 </html>

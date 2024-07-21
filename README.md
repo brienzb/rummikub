@@ -1,5 +1,5 @@
-# Rummikub
-루미큐브 PC 온라인
+# Rummikub Hangeul Word
+루미큐브 한글 워드
 
 ## Environment
 - Python 3.10.14
