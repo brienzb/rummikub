@@ -1,29 +1,22 @@
 from fastapi import APIRouter
-from fastapi import Request
 from fastapi import WebSocket, WebSocketDisconnect
 
 from app.internal.client import client_manager as manager
-from app.internal.templates import get_template_response
 
-ws = APIRouter(
-    prefix="/ws",
+websocket = APIRouter(
+    prefix="/websocket",
     tags=["websocket"],
 )
 
 
-@ws.get("/")
-async def get_websocket(request: Request):
-    return get_template_response(request=request, name="websocket.html")
-
-
-@ws.websocket("/{client_id}")
-async def websocket_endpoint(websocket: WebSocket, client_id: int):
-    await manager.connect(websocket)
+@websocket.websocket("/{client_id}")
+async def websocket_endpoint(ws: WebSocket, client_id: str):
+    await manager.connect(ws)
     try:
         while True:
-            data = await websocket.receive_text()
-            await manager.send_personal_message(f"You wrote: {data}", websocket)
+            data = await ws.receive_text()
+            await manager.send_personal_message(f"You wrote: {data}", ws)
             await manager.broadcast(f"Client #{client_id} says: {data}")
     except WebSocketDisconnect:
-        manager.disconnect(websocket)
+        manager.disconnect(ws)
         await manager.broadcast(f"Client #{client_id} left the chat")

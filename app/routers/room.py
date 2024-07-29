@@ -32,6 +32,8 @@ async def get_room(request: Request, room_id: int):
     if room_id not in room_pool:
         raise HTTPException(status_code=404, detail="Room not found")
 
+    # TODO: 요청한 클라이언트의 user_id 존재 하는지 확인
+
     return get_template_response(
         request=request,
         name="game.html",

@@ -5,14 +5,14 @@ from fastapi.staticfiles import StaticFiles
 from app.internal.templates import get_template_response
 from app.routers.room import room
 from app.routers.user import user
-from app.routers.websocket import ws
+from app.routers.websocket import websocket
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.include_router(room)
 app.include_router(user)
-app.include_router(ws)
+app.include_router(websocket)
 
 
 @app.get("/")

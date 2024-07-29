@@ -19,6 +19,27 @@
                 <h3>방 ID: {{ room_id }}</h3>
             </div>
         </div>
+
+        <!-- (임시) 채팅 리스트 -->
+        <div class="d-flex justify-content-center mb-5">
+            <div class="border border-secondary border-opacity-50 rounded w-75 pt-4 pb-2 ps-2 pe-2">
+                <div class="row">
+                    <div class="text-center mb-2">
+                        Your ID: <span id="ws-id"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-group">
+                        <input id="messageText" type="text" class="form-control" aria-label="채팅을 입력해주세요" autocomplete="off">
+                        <button id="sendMessage" type="button" class="btn btn-outline-secondary">Send</button>
+                    </div>
+                </div>
+                <div class="row pt-3 ps-3 pe-3">
+                    <ul id='messages'>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Bootstrap -->
