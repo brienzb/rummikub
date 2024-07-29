@@ -14,21 +14,43 @@
 <body>
     <div class="container">
         <!-- 제목 -->
-        <div class="d-flex justify-content-center m-5">
+        <div class="d-flex justify-content-center mt-5 mb-5">
             <div class="text-center">
                 <h1>Rummikub Hangeul Word</h1>
                 <h3>루미큐브 한글 워드</h3>
             </div>
         </div>
 
-        <!-- 방 만들기 -->
-        <div class="d-flex justify-content-center mt-2 mb-2">
-            <button id="createRoom" type="button" class="btn btn-success w-50">방 만들기</button>
+        <!-- 닉네임 -->
+        <div class="d-flex justify-content-center mb-5">
+            <div class="border border-secondary border-opacity-50 rounded w-50 pt-4 pb-4 ps-2 pe-2">
+                <div class="row">
+                    <div class="text-center">
+                        <h4>닉네임</h4>
+                    </div>
+                    <div class="text-center mb-2">
+                        <span id="currentNickname"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-group">
+                        <input id="nickname" type="text" class="form-control" placeholder="닉네임을 입력해주세요" aria-label="닉네임을 입력해주세요">
+                        <button id="createUser" type="button" class="btn btn-outline-secondary">생성</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- 방 접속하기 -->
+        <!-- 방 -->
         <div class="d-flex justify-content-center mt-2 mb-2">
-            <button id="enterRoom" type="button" class="btn btn-primary w-50">방 접속하기</button>
+            <div class="w-50">
+                <div class="row mb-2">
+                    <button id="createRoom" type="button" class="btn btn-success">방 만들기</button>
+                </div>
+                <div class="row mb-1">
+                    <button id="enterRoom" type="button" class="btn btn-primary">방 접속하기</button>
+                </div>
+            </div>
         </div>
     </div>
 

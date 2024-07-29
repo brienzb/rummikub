@@ -12,13 +12,13 @@ room = APIRouter(
 )
 
 
-# [TODO] room_pool 싱글톤 객체로 구현 (혹은 다른 무언가..)
+# TODO: room_pool 싱글톤 객체로 구현 (혹은 다른 무언가..)
 room_pool = []
 
 
 @room.post("/create")
 async def create_room(request: Request) -> int:
-    # [TODO] room_id 생성 로직 구현
+    # TODO: room_id 생성 로직 구현
     room_id = random.randint(10000, 99999)
 
     room_pool.append(room_id)

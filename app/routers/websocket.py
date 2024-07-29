@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from fastapi import Request
 from fastapi import WebSocket, WebSocketDisconnect
 
+from app.internal.client import client_manager as manager
 from app.internal.templates import get_template_response
 
 ws = APIRouter(
@@ -10,30 +11,8 @@ ws = APIRouter(
 )
 
 
-class ConnectionManager:
-    def __init__(self):
-        self.active_connections: list[WebSocket] = []
-
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_connections.append(websocket)
-
-    def disconnect(self, websocket: WebSocket):
-        self.active_connections.remove(websocket)
-
-    async def send_personal_message(self, message: str, websocket: WebSocket):
-        await websocket.send_text(message)
-
-    async def broadcast(self, message: str):
-        for connection in self.active_connections:
-            await connection.send_text(message)
-
-
-manager = ConnectionManager()
-
-
 @ws.get("/")
-async def websocket(request: Request):
+async def get_websocket(request: Request):
     return get_template_response(request=request, name="websocket.html")
 
 
