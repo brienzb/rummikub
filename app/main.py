@@ -14,5 +14,5 @@ app.include_router(ws)
 
 
 @app.get("/")
-async def get(request: Request):
+async def get_home(request: Request):
     return get_template_response(request=request, name="index.html")

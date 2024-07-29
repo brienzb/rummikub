@@ -35,5 +35,5 @@ async def get_room(request: Request, room_id: int):
     return get_template_response(
         request=request,
         name="game.html",
-        context={"room_id": room_id}
+        context={"room_id": room_id},
     )
