@@ -4,7 +4,7 @@ from datetime import datetime
 
 from fastapi import WebSocket
 
-USER_KEY_NAME = "RUMMIKUB_USER_ID"
+USER_COOKIE_KEY = "RUMMIKUB_USER_ID"
 
 
 @dataclass()
@@ -41,7 +41,7 @@ class UserManager:
 
     def can_create_user(self, nickname: str, random_number: int) -> bool:
         user = User(nickname=nickname, random_number=random_number)
-        return not self._is_in_user_list(user_id=user.user_id)
+        return not self.is_in_user_pool(user_id=user.user_id)
 
     def delete_user(self, user_id: str):
         try:
@@ -51,14 +51,14 @@ class UserManager:
             pass
 
     def get_user(self, user_id: str) -> User:
-        if self._is_in_user_list(user_id=user_id):
+        if self.is_in_user_pool(user_id=user_id):
             return self.user_dict[user_id]
         raise KeyError(f"There is no user with user_id: {user_id}")
 
-    def get_user_list(self) -> list:
+    def get_user_pool(self) -> list:
         return [user.to_dict() for user in self.user_dict.values()]
 
-    def _is_in_user_list(self, user_id: str) -> bool:
+    def is_in_user_pool(self, user_id: str) -> bool:
         return user_id in self.user_dict
 
 
