@@ -1,21 +1,16 @@
-import random
-
 from fastapi import APIRouter
 from fastapi import HTTPException
 from fastapi import Request, Cookie
 
 from app.internal.client import USER_COOKIE_KEY
-from app.internal.client import user_manager
-from app.internal.templates import get_template_response
+from app.internal.client import user_manager, room_manager
+from app.internal.template import get_template_response
+from app.internal.util import generate_random_string
 
 room = APIRouter(
     prefix="/room",
     tags=["room"],
 )
-
-
-# TODO: room_pool 싱글톤 객체로 구현 (혹은 다른 무언가..)
-room_pool = []
 
 
 def check_user_alive(user_id: str | None) -> bool:
@@ -28,33 +23,44 @@ def check_user_alive(user_id: str | None) -> bool:
 async def create_room(
     request: Request,
     rummikub_user_id: str = Cookie(default=None, alias=USER_COOKIE_KEY),
-) -> int:
+) -> str:
     if not check_user_alive(rummikub_user_id):
         raise HTTPException(status_code=403, detail="Create a user first")
+    user_obj = user_manager.get_user(rummikub_user_id)
 
-    # TODO: room_id 생성 로직 구현
-    room_id = random.randint(10000, 99999)
+    while True:
+        room_id = generate_random_string()
 
-    room_pool.append(room_id)
-    print("current room pool status:", room_pool)
+        if room_manager.can_create_room(room_id):
+            room_obj = room_manager.create_room(room_id=room_id, user_list=[user_obj])
+            break
 
+    print(f"[create_room] Create room_id: {room_obj.room_id}")
     return room_id
 
 
 @room.get("/{room_id}")
 async def get_room(
     request: Request,
-    room_id: int,
+    room_id: str,
     rummikub_user_id: str = Cookie(default=None, alias=USER_COOKIE_KEY),
 ):
-    if room_id not in room_pool:
+    if not room_manager.is_in_room_pool(room_id):
         raise HTTPException(status_code=404, detail="Room not found")
 
     if not check_user_alive(rummikub_user_id):
         raise HTTPException(status_code=403, detail="Create a user first")
+
+    # TODO: URL 치고 입력한 사람은 입장 불가 (room.user_list 안에 존재하는 user 인지 확인)
 
     return get_template_response(
         request=request,
         name="game.html",
         context={"room_id": room_id},
     )
+
+
+# [ADMIN] Room 풀 확인용 API
+@room.get("/get/pool")
+async def get_room_pool(request: Request) -> list:
+    return room_manager.get_room_pool()

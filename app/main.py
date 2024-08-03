@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi import Request
 from fastapi.staticfiles import StaticFiles
 
-from app.internal.templates import get_template_response
+from app.internal.template import get_template_response
 from app.routers.room import room
 from app.routers.user import user
 from app.routers.websocket import websocket
