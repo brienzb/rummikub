@@ -45,13 +45,21 @@ async def get_room(
     room_id: str,
     rummikub_user_id: str = Cookie(default=None, alias=USER_COOKIE_KEY),
 ):
-    if not room_manager.is_in_room_pool(room_id):
-        raise HTTPException(status_code=404, detail="Room not found")
-
     if not check_user_alive(rummikub_user_id):
         raise HTTPException(status_code=403, detail="Create a user first")
+    user_obj = user_manager.get_user(rummikub_user_id)
 
-    # TODO: URL 치고 입력한 사람은 입장 불가 (room.user_list 안에 존재하는 user 인지 확인)
+    if not room_manager.is_in_room_pool(room_id):
+        raise HTTPException(status_code=404, detail="Room not found")
+    room_obj = room_manager.get_room(room_id)
+
+    # [COMMENT] 참여 권한 있는 user 인지 확인
+    valid_user_check = False
+    for user in room_obj.user_list:
+        if user.user_id == user_obj.user_id:
+            valid_user_check = True
+    if not valid_user_check:
+        raise HTTPException(status_code=401, detail="No permission to join in the room")
 
     return get_template_response(
         request=request,
@@ -60,7 +68,7 @@ async def get_room(
     )
 
 
-# [ADMIN] Room 풀 확인용 API
+# [ADMIN] room 풀 확인용 API
 @room.get("/get/pool")
 async def get_room_pool(request: Request) -> list:
     return room_manager.get_room_pool()

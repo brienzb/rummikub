@@ -47,7 +47,7 @@ async def get_user(
         raise HTTPException(status_code=404, detail="User not found")
 
 
-# [ADMIN] User 풀 확인용 API
+# [ADMIN] user 풀 확인용 API
 @user.get("/get/pool")
 async def get_user_pool(request: Request) -> list:
     return user_manager.get_user_pool()

@@ -93,6 +93,11 @@ class RoomManager:
         candidate_room = Room(room_id=candidate_room_id)
         return not self.is_in_room_pool(room_id=candidate_room.room_id)
 
+    def get_room(self, room_id: str) -> Room:
+        if self.is_in_room_pool(room_id=room_id):
+            return self.room_dict[room_id]
+        raise KeyError(f"There is no room with room_id: {room_id}")
+
     def get_room_pool(self) -> list:
         return [room.to_dict() for room in self.room_dict.values()]
 
