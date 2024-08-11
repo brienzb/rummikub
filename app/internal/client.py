@@ -11,17 +11,20 @@ class User:
     user_id: str
     nickname: str
     create_datetime: int
+    last_datetime: int
 
     def __init__(self, user_id: str, nickname: str = ""):
         self.user_id = user_id
         self.nickname = nickname
         self.create_datetime = int(datetime.now().timestamp())
+        self.last_datetime = self.create_datetime
 
     def to_dict(self) -> dict:
         return {
             "user_id": self.user_id,
             "nickname": self.nickname,
             "create_datetime": self.create_datetime,
+            "last_datetime": self.last_datetime,
         }
 
 
@@ -63,6 +66,7 @@ class Room:
     user_list: list[User]
     websocket: WebSocket
     create_datetime: int
+    last_datetime: int
 
     def __init__(self, room_id: str, user_list: list[User] | None = None):
         if user_list is None:
@@ -71,12 +75,14 @@ class Room:
         self.room_id = room_id
         self.user_list = user_list
         self.create_datetime = int(datetime.now().timestamp())
+        self.last_datetime = self.create_datetime
 
     def to_dict(self) -> dict:
         return {
             "room_id": self.room_id,
             "user_list": [user.to_dict() for user in self.user_list],
             "create_datetime": self.create_datetime,
+            "last_datetime": self.last_datetime,
         }
 
 

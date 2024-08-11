@@ -34,8 +34,9 @@
                 </div>
                 <div class="row">
                     <div class="input-group">
-                        <input id="nickname" type="text" class="form-control" placeholder="닉네임을 입력해주세요" aria-label="닉네임을 입력해주세요">
+                        <input id="nickname" type="text" class="form-control" placeholder="닉네임을 입력해 주세요" aria-label="닉네임을 입력해 주세요">
                         <button id="createUser" type="button" class="btn btn-outline-secondary">생성</button>
+                        <div class="invalid-feedback">닉네임이 너무 짧거나 깁니다 (최소 1자 이상, 최대 20자 이하)</div>
                     </div>
                 </div>
             </div>
@@ -48,7 +49,27 @@
                     <button id="createRoom" type="button" class="btn btn-success">방 만들기</button>
                 </div>
                 <div class="row mb-2">
-                    <button id="enterRoom" type="button" class="btn btn-primary">방 접속하기</button>
+                    <button id="showEnterRoomModal" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#enterRoomModal">방 접속하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 방 접속하기 모달 -->
+    <div id="enterRoomModal" class="modal fade" tabindex="-1" aria-labelledby="enterRoomModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">방 접속하기</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input id="roomId" type="text" class="form-control" placeholder="방 ID를 입력해 주세요" aria-label="방 ID를 입력해 주세요">
+                    <div class="invalid-feedback">올바른 방 ID 값이 아닙니다</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button id="enterRoom" type="button" class="btn btn-primary">접속하기</button>
                 </div>
             </div>
         </div>
@@ -60,6 +81,7 @@
     <!-- jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <!-- Static -->
+    <script src="{{ url_for('static', path='/js/util.js') }}"></script>
     <script src="{{ url_for('static', path='/js/index.js') }}"></script>
 </body>
 </html>

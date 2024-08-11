@@ -43,6 +43,25 @@ async def create_room(
     return room_id
 
 
+@room.post("/join")
+async def join_room(
+    request: Request,
+    rummikub_user_id: str = Cookie(default=None, alias=USER_COOKIE_KEY),
+):
+    data = await request.body()
+    room_id = data.decode("utf-8")
+
+    if not check_user_alive(rummikub_user_id):
+        raise HTTPException(status_code=403, detail="Create a user first")
+    this_user = user_manager.get_user(rummikub_user_id)
+
+    if not check_room_alive(room_id):
+        raise HTTPException(status_code=404, detail="Room not found")
+    this_room = room_manager.get_room(room_id)
+
+    this_room.user_list.append(this_user)
+
+
 @room.get("/{room_id}")
 async def get_room(
     request: Request,

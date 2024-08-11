@@ -15,19 +15,19 @@ $(document).ready(function () {
 
     // 유저 생성 버튼
     $("#createUser").click(function () {
-        // TODO: nickname 영어, 한글, 숫자만 입력 가능 하도록 예외 처리
         const nickname = $('#nickname').val();
-        if (nickname.length === 0 || nickname.length > 20) {
-            // TODO: alert Bootstrap 이용
-            alert("닉네임이 너무 짧거나 깁니다 (최소 1자 이상, 최대 20자 이하)");
+
+        if (!isValidInput(nickname, 1, 20, false)) {
+            $("#nickname").addClass("is-invalid");
             return;
         }
+        $("#nickname").removeClass("is-invalid");
 
         fetch("/user/create", {
-                method: "POST",
-                headers: {"Content-Type": "text/plain"},
-                body: nickname,
-            })
+            method: "POST",
+            headers: {"Content-Type": "text/plain"},
+            body: nickname,
+        })
             .then(response => response.json())
             .then(user => {
                 client = user;
@@ -37,13 +37,13 @@ $(document).ready(function () {
 
     // 방 만들기 버튼
     $("#createRoom").click(function () {
+        // TODO: 제한 인원수, 턴 시간 입력 받아서 방 생성
         fetch("/room/create", {method: "POST"})
             .then(response => {
                 if (response.status !== 200) throw new Error();
                 return response.json();
             })
             .then(roomId => {
-                console.log("Room ID:", roomId);
                 window.location.href = `/room/${roomId}`
             })
             .catch(error => {
@@ -53,5 +53,34 @@ $(document).ready(function () {
     });
 
     // 방 접속하기 버튼
-    // TODO: 방 접속하기 버튼 클릭 함수 구현
+    $("#enterRoom").click(function () {
+        const roomId = $("#roomId").val();
+
+        if (!isValidInput(roomId, 16, 16)) {
+            $("#roomId").addClass("is-invalid");
+            return;
+        }
+        $("#roomId").removeClass("is-invalid");
+
+        fetch("/room/join", {
+            method: "POST",
+            headers: {"Content-Type": "text/plain"},
+            body: roomId,
+        })
+            .then(response => {
+                if (response.status !== 200) {
+                    const error = new Error();
+                    error.response =  response;
+                    throw error;
+                }
+            })
+            .then(() => {
+                window.location.href = `/room/${roomId}`
+            })
+            .catch(error => {
+                // TODO: alert Bootstrap 이용
+                if (error.response.status === 403) alert("닉네임을 먼저 생성해 주세요");
+                else alert("존재 하지 않는 방 입니다");
+            });
+    });
 });
