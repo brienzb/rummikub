@@ -19,6 +19,10 @@ def check_user_alive(user_id: str | None) -> bool:
     return user_manager.is_in_user_pool(user_id)
 
 
+def check_room_alive(room_id: str) -> bool:
+    return room_manager.is_in_room_pool(room_id)
+
+
 @room.post("/create")
 async def create_room(
     request: Request,
@@ -26,16 +30,16 @@ async def create_room(
 ) -> str:
     if not check_user_alive(rummikub_user_id):
         raise HTTPException(status_code=403, detail="Create a user first")
-    user_obj = user_manager.get_user(rummikub_user_id)
+    this_user = user_manager.get_user(rummikub_user_id)
 
     while True:
         room_id = generate_random_string()
 
         if room_manager.can_create_room(room_id):
-            room_obj = room_manager.create_room(room_id=room_id, user_list=[user_obj])
+            this_room = room_manager.create_room(room_id=room_id, user_list=[this_user])
             break
 
-    print(f"[create_room] Create room_id: {room_obj.room_id}")
+    print(f"[create_room] Create room_id: {this_room.room_id}")
     return room_id
 
 
@@ -47,18 +51,18 @@ async def get_room(
 ):
     if not check_user_alive(rummikub_user_id):
         raise HTTPException(status_code=403, detail="Create a user first")
-    user_obj = user_manager.get_user(rummikub_user_id)
+    this_user = user_manager.get_user(rummikub_user_id)
 
-    if not room_manager.is_in_room_pool(room_id):
+    if not check_room_alive(room_id):
         raise HTTPException(status_code=404, detail="Room not found")
-    room_obj = room_manager.get_room(room_id)
+    this_room = room_manager.get_room(room_id)
 
     # [COMMENT] 참여 권한 있는 user 인지 확인
-    valid_user_check = False
-    for user in room_obj.user_list:
-        if user.user_id == user_obj.user_id:
-            valid_user_check = True
-    if not valid_user_check:
+    id_valid_user = False
+    for user in this_room.user_list:
+        if user.user_id == this_user.user_id:
+            id_valid_user = True
+    if not id_valid_user:
         raise HTTPException(status_code=401, detail="No permission to join in the room")
 
     return get_template_response(

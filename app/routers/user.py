@@ -28,12 +28,12 @@ async def create_user(
         user_id = generate_random_string()
 
         if user_manager.can_create_user(user_id):
-            user_obj = user_manager.create_user(user_id=user_id, nickname=nickname)
+            this_user = user_manager.create_user(user_id=user_id, nickname=nickname)
             break
 
-    response.set_cookie(key=USER_COOKIE_KEY, value=user_obj.user_id)
-    print(f"[create_user] Create user_id: {user_obj.user_id}")
-    return user_obj.to_dict()
+    response.set_cookie(key=USER_COOKIE_KEY, value=this_user.user_id)
+    print(f"[create_user] Create user_id: {this_user.user_id}")
+    return this_user.to_dict()
 
 
 @user.get("/get")
