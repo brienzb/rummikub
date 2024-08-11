@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from fastapi import HTTPException
 from fastapi import Request, Response, Cookie
+from fastapi import status
 
 from app.internal.client import USER_COOKIE_KEY
 from app.internal.client import user_manager
@@ -44,7 +45,10 @@ async def get_user(
     try:
         return user_manager.get_user(rummikub_user_id).to_dict()
     except Exception as e:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
 
 
 # [ADMIN] user 풀 확인용 API
