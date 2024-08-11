@@ -52,6 +52,6 @@ async def get_user(
 
 
 # [ADMIN] user 풀 확인용 API
-@user.get("/get/pool")
+@user.get("/get/pool", tags=["admin"])
 async def get_user_pool(request: Request) -> list:
     return user_manager.get_user_pool()

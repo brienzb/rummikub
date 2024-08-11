@@ -64,7 +64,7 @@ class UserManager:
 class Room:
     room_id: str
     user_list: list[User]
-    websocket: WebSocket
+    websocket_list: list[WebSocket]
     create_datetime: int
     last_datetime: int
 
@@ -74,6 +74,7 @@ class Room:
 
         self.room_id = room_id
         self.user_list = user_list
+        self.websocket_list = []
         self.create_datetime = int(datetime.now().timestamp())
         self.last_datetime = self.create_datetime
 
@@ -81,6 +82,7 @@ class Room:
         return {
             "room_id": self.room_id,
             "user_list": [user.to_dict() for user in self.user_list],
+            "websocket_count": len(self.websocket_list),
             "create_datetime": self.create_datetime,
             "last_datetime": self.last_datetime,
         }
@@ -99,6 +101,13 @@ class RoomManager:
         candidate_room = Room(room_id=candidate_room_id)
         return not self.is_in_room_pool(room_id=candidate_room.room_id)
 
+    def delete_room(self, room_id: str):
+        try:
+            room = self.get_room(room_id)
+            del self.room_dict[room.room_id]
+        except KeyError:
+            pass
+
     def get_room(self, room_id: str) -> Room:
         if self.is_in_room_pool(room_id=room_id):
             return self.room_dict[room_id]
@@ -110,27 +119,40 @@ class RoomManager:
     def is_in_room_pool(self, room_id: str) -> bool:
         return room_id in self.room_dict
 
+    # [COMMENT] User join
+    def join_room(self, room_id: str, user: User):
+        room = self.get_room(room_id)
+        is_in_user = False
+        for u in room.user_list:
+            if u.user_id == user.user_id:
+                is_in_user = True
+        if not is_in_user:
+            room.user_list.append(user)
 
-# TODO: WebSocket 매니저 로직 수정 필요
-class ClientManager:
-    def __init__(self):
-        self.active_connections: list[WebSocket] = []
+    # [COMMENT] User leave
+    def leave_room(self, room_id: str, user: User):
+        room = self.get_room(room_id)
+        for idx, u in enumerate(room.user_list):
+            if u.user_id == user.user_id:
+                del room.user_list[idx]
 
-    async def connect(self, websocket: WebSocket):
+    # [COMMENT] WebSocket connect
+    async def connect_room(self, room_id: str, websocket: WebSocket):
+        room = self.get_room(room_id)
         await websocket.accept()
-        self.active_connections.append(websocket)
+        room.websocket_list.append(websocket)
 
-    def disconnect(self, websocket: WebSocket):
-        self.active_connections.remove(websocket)
+    # [COMMENT] WebSocket disconnect
+    def disconnect_room(self, room_id: str, websocket: WebSocket):
+        room = self.get_room(room_id)
+        room.websocket_list.remove(websocket)
 
-    async def send_personal_message(self, message: str, websocket: WebSocket):
-        await websocket.send_text(message)
-
-    async def broadcast(self, message: str):
-        for connection in self.active_connections:
-            await connection.send_text(message)
+    # [COMMENT] WebSocket broadcast
+    async def broadcast_room(self, room_id: str, message: str):
+        room = self.get_room(room_id)
+        for websocket in room.websocket_list:
+            await websocket.send_text(message)
 
 
 user_manager = UserManager()
 room_manager = RoomManager()
-client_manager = ClientManager()

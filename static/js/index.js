@@ -14,7 +14,7 @@ $(document).ready(function () {
         .catch(error => {});
 
     // 유저 생성 버튼
-    $("#createUser").click(function () {
+    function createUser() {
         const nickname = $('#nickname').val();
 
         if (!isValidInput(nickname, 1, 20, false)) {
@@ -33,7 +33,9 @@ $(document).ready(function () {
                 client = user;
                 $("#currentNickname").text(`현재 닉네임: ${client["nickname"]}`)
             });
-    });
+    }
+    $("#nickname").on("keypress", function(event) { if (event.key === "Enter") createUser(); });
+    $("#createUser").click(function () { createUser(); });
 
     // 방 만들기 버튼
     $("#createRoom").click(function () {
@@ -53,7 +55,7 @@ $(document).ready(function () {
     });
 
     // 방 접속하기 버튼
-    $("#enterRoom").click(function () {
+    function enterRoom() {
         const roomId = $("#roomId").val();
 
         if (!isValidInput(roomId, 16, 16)) {
@@ -82,5 +84,7 @@ $(document).ready(function () {
                 if (error.response.status === 403) alert("닉네임을 먼저 생성해 주세요");
                 else alert("존재 하지 않는 방 입니다");
             });
-    });
+    }
+    $("#roomId").on("keypress", function(event) { if (event.key === "Enter") enterRoom(); });
+    $("#enterRoom").click(function () { enterRoom(); });
 });

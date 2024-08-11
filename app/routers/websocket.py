@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from fastapi import WebSocket, WebSocketDisconnect
 
-from app.internal.client import client_manager as manager
+from app.internal.client import user_manager, room_manager
 
 websocket = APIRouter(
     prefix="/websocket",
@@ -9,14 +9,28 @@ websocket = APIRouter(
 )
 
 
-@websocket.websocket("/{client_id}")
-async def websocket_endpoint(ws: WebSocket, client_id: str):
-    await manager.connect(ws)
+@websocket.websocket("/{room_id}/{user_id}")
+async def websocket_endpoint(ws: WebSocket, room_id: str, user_id: str):
+    # TODO: user 및 room 존재 하는지 확인 필요?!
+    this_user = user_manager.get_user(user_id)
+
+    await room_manager.connect_room(room_id=room_id, websocket=ws)
+    await room_manager.broadcast_room(
+        room_id=room_id,
+        message=f"{this_user.nickname} ({this_user.user_id}) 님이 방에 들어왔습니다.",
+    )
+
     try:
         while True:
             data = await ws.receive_text()
-            await manager.send_personal_message(f"You wrote: {data}", ws)
-            await manager.broadcast(f"Client #{client_id} says: {data}")
+            await room_manager.broadcast_room(
+                room_id=room_id,
+                message=f"{this_user.nickname} ({this_user.user_id}) : {data}",
+            )
     except WebSocketDisconnect:
-        manager.disconnect(ws)
-        await manager.broadcast(f"Client #{client_id} left the chat")
+        room_manager.disconnect_room(room_id=room_id, websocket=ws)
+        room_manager.leave_room(room_id=room_id, user=this_user)
+        await room_manager.broadcast_room(
+            room_id=room_id,
+            message=f"{this_user.nickname} ({this_user.user_id}) 님이 방을 나갔습니다.",
+        )

@@ -74,13 +74,7 @@ async def join_room(
     this_user = get_this_user(rummikub_user_id)
     this_room = get_this_room(room_id)
 
-    # [COMMENT] user 리스트에 없는 경우 추가
-    is_in_user = False
-    for user in this_room.user_list:
-        if user.user_id == this_user.user_id:
-            is_in_user = True
-    if not is_in_user:
-        this_room.user_list.append(this_user)
+    room_manager.join_room(room_id=this_room.room_id, user=this_user)
 
 
 @room.get("/{room_id}")
@@ -111,6 +105,6 @@ async def get_room(
 
 
 # [ADMIN] room 풀 확인용 API
-@room.get("/get/pool")
+@room.get("/get/pool", tags=["admin"])
 async def get_room_pool(request: Request) -> list:
     return room_manager.get_room_pool()
