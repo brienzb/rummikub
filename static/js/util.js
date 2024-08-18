@@ -8,16 +8,14 @@ function getCookieValue(cookie_key) {
         let cookiePair = cookieArr[i].split("=");
         if(cookie_key === cookiePair[0].trim()) return decodeURIComponent(cookiePair[1]);
     }
-
     return null;
 }
 
 function parseAfterPath(url, path) {
     const regex = new RegExp('/' + path + '/([^/]+)');
-
     const match = url.match(regex);
-    if (match) return match[1];
 
+    if (match) return match[1];
     return null
 }
 

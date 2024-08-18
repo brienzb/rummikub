@@ -1,13 +1,25 @@
+import threading
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi import Request
 from fastapi.staticfiles import StaticFiles
 
+from app.internal.monitor import monitor_client_alive_task
 from app.internal.template import get_template_response
 from app.routers.room import room
 from app.routers.user import user
 from app.routers.websocket import websocket
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    thread = threading.Thread(target=monitor_client_alive_task, daemon=True)
+    thread.start()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.include_router(user)
