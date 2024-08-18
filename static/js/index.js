@@ -39,17 +39,31 @@ $(document).ready(function () {
 
     // 방 만들기 버튼
     $("#createRoom").click(function () {
-        // TODO: 제한 인원수, 턴 시간 입력 받아서 방 생성
-        fetch("/room/create", {method: "POST"})
+        const playUserCount = $("input[name='playUserCount']:checked").val();
+        const turnTime = $("#turnTime").val();
+
+        fetch("/room/create", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                "playUserCount": parseInt(playUserCount, 10),
+                "turnTime": parseInt(turnTime, 10),
+            }),
+        })
             .then(response => {
-                if (response.status !== 200) throw new Error();
+                if (response.status !== 200) {
+                    const error = new Error();
+                    error.response =  response;
+                    throw error;
+                }
                 return response.json();
             })
             .then(roomId => {
                 window.location.href = `/room/${roomId}`
             })
             .catch(error => {
-                showAlert("닉네임을 먼저 생성해 주세요");
+                if (error.response.status === 403) showAlert("닉네임을 먼저 생성해 주세요");
+                else showAlert("예기치 못한 에러 입니다");
             });
     });
 

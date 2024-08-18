@@ -63,16 +63,26 @@ class UserManager:
 @dataclass()
 class Room:
     room_id: str
+    play_user_count: int
+    turn_time: int
     user_list: list[User]
     websocket_list: list[WebSocket]
     create_datetime: int
     last_datetime: int
 
-    def __init__(self, room_id: str, user_list: list[User] | None = None):
+    def __init__(
+        self,
+        room_id: str,
+        play_user_count: int = 2,
+        turn_time: int = 60,
+        user_list: list[User] | None = None,
+    ):
         if user_list is None:
             user_list = []
 
         self.room_id = room_id
+        self.play_user_count = play_user_count
+        self.turn_time = turn_time
         self.user_list = user_list
         self.websocket_list = []
         self.create_datetime = int(datetime.now().timestamp())
@@ -81,6 +91,8 @@ class Room:
     def to_dict(self) -> dict:
         return {
             "room_id": self.room_id,
+            "play_user_count": self.play_user_count,
+            "turn_time": self.turn_time,
             "user_list": [user.to_dict() for user in self.user_list],
             "websocket_count": len(self.websocket_list),
             "create_datetime": self.create_datetime,
@@ -92,8 +104,19 @@ class RoomManager:
     def __init__(self):
         self.room_dict: dict[str, Room] = {}  # {room_id: Room}
 
-    def create_room(self, room_id: str, user_list: list) -> Room:
-        room = Room(room_id=room_id, user_list=user_list)
+    def create_room(
+        self,
+        room_id: str,
+        play_user_count: int,
+        turn_time: int,
+        user_list: list,
+    ) -> Room:
+        room = Room(
+            room_id=room_id,
+            play_user_count=play_user_count,
+            turn_time=turn_time,
+            user_list=user_list,
+        )
         self.room_dict[room.room_id] = room
         return room
 

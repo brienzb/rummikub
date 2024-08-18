@@ -47,7 +47,7 @@
         <div class="d-flex justify-content-center mt-2 mb-2">
             <div class="w-50">
                 <div class="row mb-2">
-                    <button id="createRoom" type="button" class="btn btn-success">방 만들기</button>
+                    <button id="showCreateRoomModel" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createRoomModal">방 만들기</button>
                 </div>
                 <div class="row mb-2">
                     <button id="showEnterRoomModal" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#enterRoomModal">방 접속하기</button>
@@ -57,6 +57,50 @@
     </div>
 
     <!-- Modal -->
+    <!-- 방 만들기 모달 -->
+    <div id="createRoomModal" class="modal fade" tabindex="-1" aria-labelledby="createRoomModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">방 만들기</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <div class="mb-2">플레이 할 유저 수</div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="playUserCount" id="play2User" value="2" checked>
+                            <label class="form-check-label" for="play2User">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="playUserCount" id="play3User" value="3">
+                            <label class="form-check-label" for="play3User">3</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="playUserCount" id="play4User" value="4">
+                            <label class="form-check-label" for="play4User">4</label>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="mb-2">턴 타임</div>
+                        <select id="turnTime" class="form-select" aria-label="턴 타임">
+                            <option value="15">15초</option>
+                            <option value="30">30초</option>
+                            <option value="40">40초</option>
+                            <option value="60" selected>60초</option>
+                            <option value="120">120초</option>
+                            <option value="-1">시간 제한 없음</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button id="createRoom" type="button" class="btn btn-primary">접속하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 방 접속하기 모달 -->
     <div id="enterRoomModal" class="modal fade" tabindex="-1" aria-labelledby="enterRoomModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">

@@ -1,3 +1,5 @@
+import json
+
 from fastapi import APIRouter
 from fastapi import HTTPException
 from fastapi import Request, Cookie
@@ -50,13 +52,21 @@ async def create_room(
     request: Request,
     rummikub_user_id: str = Cookie(default=None, alias=USER_COOKIE_KEY),
 ) -> str:
+    data = await request.body()
+    room_info = json.loads(data.decode("utf-8"))
+
     this_user = get_this_user(rummikub_user_id)
 
     while True:
         room_id = generate_random_string()
 
         if room_manager.can_create_room(room_id):
-            this_room = room_manager.create_room(room_id=room_id, user_list=[this_user])
+            this_room = room_manager.create_room(
+                room_id=room_id,
+                play_user_count=room_info["playUserCount"],
+                turn_time=room_info["turnTime"],
+                user_list=[this_user],
+            )
             break
 
     print(f"[create_room] Create room_id: {this_room.room_id}")
