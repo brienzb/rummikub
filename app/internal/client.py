@@ -59,6 +59,11 @@ class UserManager:
     def is_in_user_pool(self, user_id: str) -> bool:
         return user_id in self.user_dict
 
+    # [COMMENT] Refresh user
+    def refresh_user(self, user_id: str):
+        user = self.get_user(user_id)
+        user.last_datetime = int(datetime.now().timestamp())
+
 
 @dataclass()
 class Room:
@@ -175,6 +180,11 @@ class RoomManager:
         room = self.get_room(room_id)
         for websocket in room.websocket_list:
             await websocket.send_text(message)
+
+    # [COMMENT] Refresh room
+    def refresh_room(self, room_id: str):
+        room = self.get_room(room_id)
+        room.last_datetime = int(datetime.now().timestamp())
 
 
 user_manager = UserManager()

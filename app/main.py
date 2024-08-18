@@ -6,6 +6,7 @@ from fastapi import Request
 from fastapi.staticfiles import StaticFiles
 
 from app.internal.monitor import monitor_client_alive_task
+from app.internal.monitor import RefreshAliveMiddleware
 from app.internal.template import get_template_response
 from app.routers.room import room
 from app.routers.user import user
@@ -21,6 +22,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+app.add_middleware(RefreshAliveMiddleware)
 
 app.include_router(user)
 app.include_router(room)

@@ -1,9 +1,16 @@
+import json
 import time
 from datetime import datetime, timedelta
 
-from app.internal.client import user_manager, room_manager
+from fastapi import Request, Response
+from starlette.middleware.base import BaseHTTPMiddleware
 
-ALIVE_TIME = 3600
+from app.internal.client import USER_COOKIE_KEY
+from app.internal.client import user_manager, room_manager
+from app.internal.util import is_alive_user, is_alive_room
+from app.internal.util import refresh_alive_user, refresh_alive_room
+
+ALIVE_TIME = 3600  # [COMMENT] 1시간(3600초) 기준 alive 확인
 LOG_MESSAGE_TEMPLATE = """[monitor_client_alive_task | {DATETIME}]
     AS-IS
         - user_manger_count: {AS_IS_USER_MANAGER_COUNT}
@@ -74,3 +81,46 @@ def monitor_client_alive_task():
 
         print(log_message)
         time.sleep(ALIVE_TIME)
+
+
+class RefreshAliveMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        if (
+            request.url.path == "/"
+            or request.url.path.startswith("/static")
+            or request.url.path.startswith("/user/create")
+            or request.url.path.startswith("/room/create")
+            or request.url.path.startswith("/user/get/pool")  # [COMMENT] ADMIN API
+            or request.url.path.startswith("/room/get/pool")  # [COMMENT] ADMIN API
+        ):
+            return await call_next(request)
+
+        # [COMMENT] cookie 값 확인해, user_id refresh
+        user_id = request.cookies.get(USER_COOKIE_KEY)
+        if is_alive_user(user_id):
+            refresh_alive_user(user_id)
+
+        # [COMMENT] path 값 확인해, room_id refresh
+        path_room_id, path_params = None, request.url.path
+        if path_params.startswith("/room/"):
+            path_room_id = path_params.split("/")[1]
+            if is_alive_room(path_room_id):
+                refresh_alive_room(path_room_id)
+
+        # [COMMENT] data 값 확인해, room_id refresh
+        data = await request.body()
+        data_room_id, content = None, data.decode("utf-8")
+        try:
+            content = json.loads(content)
+            data_room_id = content["roomId"]
+        except Exception:
+            data_room_id = content
+        finally:
+            if is_alive_room(data_room_id):
+                refresh_alive_room(data_room_id)
+
+        print(
+            f"[RefreshAliveMiddleware] user_id: {user_id}, path_room_id: {path_room_id}, data_room_id: {data_room_id}"
+        )
+
+        return await call_next(request)

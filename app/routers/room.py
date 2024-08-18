@@ -10,23 +10,12 @@ from app.internal.client import User, Room
 from app.internal.client import user_manager, room_manager
 from app.internal.template import get_template_response
 from app.internal.util import generate_random_string
+from app.internal.util import is_alive_user, is_alive_room
 
 room = APIRouter(
     prefix="/room",
     tags=["room"],
 )
-
-
-def is_alive_user(user_id: str | None) -> bool:
-    if user_id is None:
-        return False
-    return user_manager.is_in_user_pool(user_id)
-
-
-def is_alive_room(room_id: str | None) -> bool:
-    if room_id is None:
-        return False
-    return room_manager.is_in_room_pool(room_id)
 
 
 def get_this_user(user_id: str | None) -> User:
