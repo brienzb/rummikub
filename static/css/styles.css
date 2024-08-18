@@ -7,3 +7,15 @@
 }
 
 * { font-family: 'Freesentation-9Black', serif; }
+
+
+/* Alert */
+.customAlert {
+    position: fixed;
+    bottom: 15px;
+    left: 5%;
+    width: 90%;
+
+    display: none;
+    z-index: 1060;  /* Modal default 값 1050 이상으로 세팅 */
+}

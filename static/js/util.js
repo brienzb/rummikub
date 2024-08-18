@@ -28,5 +28,11 @@ function isValidInput(inputValue, minLength, maxLength, checkValidPattern = true
     return (inputValue.length >= minLength && inputValue.length <= maxLength);
 }
 
+function showAlert(alertMessage, alertDivId = "wrongInputAlert",  alertMessageDivId = "wrongInputAlertMessage") {
+    $(`#${alertMessageDivId}`).text(alertMessage);
+    $(`#${alertDivId}`).fadeIn();
+    setTimeout(function() { $(`#${alertDivId}`).fadeOut(); }, 1000);
+}
+
 function getUserId() { return getCookieValue(userCookieKey); }
 function getRoomId() { return parseAfterPath(window.location.href, "room"); }

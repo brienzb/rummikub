@@ -13,8 +13,8 @@ $(document).ready(function () {
             $("#ws-client").text(`${client["nickname"]} (${client["user_id"]})`);
         })
         .catch(error => {
-            // TODO: alert Bootstrap 이용
             alert("잘못된 접근 입니다");
+            window.history.back();
         });
 
     // TODO: 방 접속한 뒤, 필요 로직 구현

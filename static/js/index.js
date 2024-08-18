@@ -49,8 +49,7 @@ $(document).ready(function () {
                 window.location.href = `/room/${roomId}`
             })
             .catch(error => {
-                // TODO: alert Bootstrap 이용
-                alert("닉네임을 먼저 생성해 주세요");
+                showAlert("닉네임을 먼저 생성해 주세요");
             });
     });
 
@@ -80,9 +79,8 @@ $(document).ready(function () {
                 window.location.href = `/room/${roomId}`
             })
             .catch(error => {
-                // TODO: alert Bootstrap 이용
-                if (error.response.status === 403) alert("닉네임을 먼저 생성해 주세요");
-                else alert("존재 하지 않는 방 입니다");
+                if (error.response.status === 403) showAlert("닉네임을 먼저 생성해 주세요");
+                else showAlert("존재 하지 않는 방 입니다");
             });
     }
     $("#roomId").on("keypress", function(event) { if (event.key === "Enter") enterRoom(); });
