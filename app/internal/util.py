@@ -1,5 +1,6 @@
 import random
 import string
+from datetime import datetime
 
 from app.internal.client import user_manager, room_manager
 
@@ -10,6 +11,10 @@ def generate_random_string(length: int = RANDOM_STRING_LENGTH):
     characters = string.ascii_letters + string.digits
     random_string = "".join(random.choice(characters) for _ in range(length))
     return random_string
+
+
+def print_log(func_name: str, message: str):
+    print(f"[{func_name} | {datetime.now()}] {message}")
 
 
 def is_alive_user(user_id: str | None) -> bool:

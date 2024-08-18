@@ -11,6 +11,7 @@ from app.internal.client import user_manager, room_manager
 from app.internal.template import get_template_response
 from app.internal.util import generate_random_string
 from app.internal.util import is_alive_user, is_alive_room
+from app.internal.util import print_log
 
 room = APIRouter(
     prefix="/room",
@@ -58,7 +59,7 @@ async def create_room(
             )
             break
 
-    print(f"[create_room] Create room_id: {this_room.room_id}")
+    print_log("create_room", f"Create room_id: {this_room.room_id}")
     return room_id
 
 

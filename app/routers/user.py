@@ -6,6 +6,7 @@ from fastapi import status
 from app.internal.client import USER_COOKIE_KEY
 from app.internal.client import user_manager
 from app.internal.util import generate_random_string
+from app.internal.util import print_log
 
 user = APIRouter(
     prefix="/user",
@@ -33,7 +34,7 @@ async def create_user(
             break
 
     response.set_cookie(key=USER_COOKIE_KEY, value=this_user.user_id)
-    print(f"[create_user] Create user_id: {this_user.user_id}")
+    print_log("create_user", f"Create user_id: {this_user.user_id}")
     return this_user.to_dict()
 
 
